@@ -1,0 +1,46 @@
+
+name: palomitopty_snap
+description: Aplicación fotográfica PALOMITOPTY SNAP
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Iconos
+  cupertino_icons: ^1.0.8
+
+  # Cámara
+  camera: ^0.12.2
+
+  # Guardar fotografías en la galería
+  gal: ^2.3.3
+
+  # Impresión y generación PDF
+  printing: ^5.15.1
+  pdf: ^3.11.3
+
+  # Selección y procesamiento de imágenes
+  image_picker: ^1.2.1
+  image: ^4.5.4
+
+  # Guardar configuración del evento
+  shared_preferences: ^2.5.3
+
+  # Archivos y almacenamiento
+  path_provider: ^2.1.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,97 @@
+{
+  "object" : {
+    "artifacts" : [
+
+    ],
+    "dependencies" : [
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "camera_avfoundation-0.11.1",
+          "kind" : "fileSystem",
+          "location" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/camera_avfoundation-0.11.1",
+          "name" : "camera_avfoundation"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/camera_avfoundation-0.11.1"
+        },
+        "subpath" : "camera_avfoundation-0.11.1"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "flutterframework",
+          "kind" : "fileSystem",
+          "location" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/FlutterFramework",
+          "name" : "FlutterFramework"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/FlutterFramework"
+        },
+        "subpath" : "flutterframework"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "gal-2.3.3",
+          "kind" : "fileSystem",
+          "location" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/gal-2.3.3",
+          "name" : "gal"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/gal-2.3.3"
+        },
+        "subpath" : "gal-2.3.3"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "image_picker_ios-0.8.13+14",
+          "kind" : "fileSystem",
+          "location" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/image_picker_ios-0.8.13+14",
+          "name" : "image_picker_ios"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/image_picker_ios-0.8.13+14"
+        },
+        "subpath" : "image_picker_ios-0.8.13+14"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "printing-5.15.1",
+          "kind" : "fileSystem",
+          "location" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/printing-5.15.1",
+          "name" : "printing"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/printing-5.15.1"
+        },
+        "subpath" : "printing-5.15.1"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "shared_preferences_foundation-2.5.7",
+          "kind" : "fileSystem",
+          "location" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/shared_preferences_foundation-2.5.7",
+          "name" : "shared_preferences_foundation"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/benjaminrosales/development/palomitopty_snap/ios/Flutter/ephemeral/Packages/.packages/shared_preferences_foundation-2.5.7"
+        },
+        "subpath" : "shared_preferences_foundation-2.5.7"
+      }
+    ],
+    "prebuilts" : [
+
+    ]
+  },
+  "version" : 7
+}
