@@ -582,7 +582,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
                   File(config.logoPath),
                   width: 180 * config.logoSize,
                   height: 130 * config.logoSize,
-                  fit: BoxFit.contain,
+                  fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return const Center(
                       child: Text(
@@ -964,6 +964,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
 // PROCESAR FOTO Y APLICAR LOGO
 // ============================================================
 
+
 Future<Uint8List> createBrandedPhoto(
   String photoPath,
   EventConfig config,
@@ -977,53 +978,73 @@ Future<Uint8List> createBrandedPhoto(
     throw Exception('No se pudo procesar la fotografía');
   }
 
-  final photo = img.bakeOrientation(decodedPhoto);
+  // Corregir orientación original.
+  final orientedPhoto = img.bakeOrientation(decodedPhoto);
 
+  // Recortar al formato vertical 4x6 (proporción 2:3).
+  final targetRatio = 2 / 3;
+  final currentRatio =
+      orientedPhoto.width / orientedPhoto.height;
+
+  late img.Image photo;
+
+  if (currentRatio > targetRatio) {
+    final newWidth =
+        (orientedPhoto.height * targetRatio).round();
+
+    photo = img.copyCrop(
+      orientedPhoto,
+      x: (orientedPhoto.width - newWidth) ~/ 2,
+      y: 0,
+      width: newWidth,
+      height: orientedPhoto.height,
+    );
+  } else {
+    final newHeight =
+        (orientedPhoto.width / targetRatio).round();
+
+    photo = img.copyCrop(
+      orientedPhoto,
+      x: 0,
+      y: (orientedPhoto.height - newHeight) ~/ 2,
+      width: orientedPhoto.width,
+      height: newHeight,
+    );
+  }
+
+  // Aplicar logo después del recorte.
   if (config.logoEnabled &&
       config.logoPath.isNotEmpty &&
       await File(config.logoPath).exists()) {
-    final logoBytes = await File(config.logoPath).readAsBytes();
+
+    final logoBytes =
+        await File(config.logoPath).readAsBytes();
+
     final decodedLogo = img.decodeImage(logoBytes);
 
     if (decodedLogo != null) {
       final logo = img.bakeOrientation(decodedLogo);
 
-      final maxLogoWidth = math.max(
-        1,
-        (photo.width * config.logoSize).round(),
-      ).toInt();
+      final maxLogoWidth =
+          (photo.width * config.logoSize).round();
 
-      final maxLogoHeight = math.max(
-        1,
-        (photo.height * config.logoSize).round(),
-      ).toInt();
+      final maxLogoHeight =
+          (photo.height * config.logoSize).round();
 
       final scale = math.min(
         maxLogoWidth / logo.width,
         maxLogoHeight / logo.height,
       );
 
-      final targetWidth = math.max(
-        1,
-        (logo.width * scale).round(),
-      ).toInt();
-
-      final targetHeight = math.max(
-        1,
-        (logo.height * scale).round(),
-      ).toInt();
-
       final resizedLogo = img.copyResize(
         logo,
-        width: targetWidth,
-        height: targetHeight,
+        width: math.max(1, (logo.width * scale).round()),
+        height: math.max(1, (logo.height * scale).round()),
         interpolation: img.Interpolation.average,
       );
 
-      final margin = math.max(
-        12,
-        (math.min(photo.width, photo.height) * 0.025).round(),
-      ).toInt();
+      final margin =
+          (math.min(photo.width, photo.height) * 0.035).round();
 
       int x = 0;
       int y = 0;
@@ -1033,32 +1054,19 @@ Future<Uint8List> createBrandedPhoto(
           x = margin;
           y = margin;
           break;
-
         case LogoPosition.topRight:
           x = photo.width - resizedLogo.width - margin;
           y = margin;
           break;
-
         case LogoPosition.bottomLeft:
           x = margin;
           y = photo.height - resizedLogo.height - margin;
           break;
-
         case LogoPosition.bottomRight:
           x = photo.width - resizedLogo.width - margin;
           y = photo.height - resizedLogo.height - margin;
           break;
       }
-
-      x = x.clamp(
-        0,
-        math.max(0, photo.width - resizedLogo.width),
-      ).toInt();
-
-      y = y.clamp(
-        0,
-        math.max(0, photo.height - resizedLogo.height),
-      ).toInt();
 
       img.compositeImage(
         photo,
@@ -1073,6 +1081,7 @@ Future<Uint8List> createBrandedPhoto(
     img.encodeJpg(photo, quality: 95),
   );
 }
+
 
 // ============================================================
 // CÁMARA
@@ -1380,51 +1389,78 @@ class _CameraScreenState extends State<CameraScreen>
   // IMPRESIÓN 4 X 6 PULGADAS
   // ==========================================================
 
-  Future<void> printPhoto() async {
-    if (brandedBytes == null) return;
+ 
 
-    try {
-      final imageBytes = brandedBytes!;
 
-      final pdf = pw.Document();
+Future<void> printPhoto() async {
+  if (brandedBytes == null) return;
 
-      pdf.addPage(
-        pw.Page(
-          pageFormat: const PdfPageFormat(
-            4 * 72,
-            6 * 72,
-          ),
-          margin: pw.EdgeInsets.zero,
-          build: (context) {
-            return pw.Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: PdfColors.white,
-              child: pw.Image(
-                pw.MemoryImage(imageBytes),
-                fit: pw.BoxFit.contain,
-              ),
-            );
-          },
-        ),
-      );
+  try {
+    final imageBytes = brandedBytes!;
 
-      await Printing.layoutPdf(
-        onLayout: (format) async {
-          return pdf.save();
-        },
-        name: 'PALOMITOPTY_${DateTime.now().millisecondsSinceEpoch}',
-        format: const PdfPageFormat(
+    final decodedImage = img.decodeImage(imageBytes);
+
+    if (decodedImage == null) {
+      throw Exception('No se pudo preparar la fotografía');
+    }
+
+    // Preparar imagen exactamente en proporción 2:3.
+    const int printWidth = 1200;
+    const int printHeight = 1800;
+
+    final centeredImage = img.copyResize(
+      decodedImage,
+      width: printWidth,
+      height: printHeight,
+      interpolation: img.Interpolation.average,
+    );
+
+    final finalBytes = img.encodeJpg(
+      centeredImage,
+      quality: 95,
+    );
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: const PdfPageFormat(
           4 * 72,
           6 * 72,
         ),
-      );
-    } catch (e) {
-      if (!mounted) return;
+        margin: pw.EdgeInsets.zero,
+        build: (context) {
+          return pw.SizedBox(
+            width: 4 * 72,
+            height: 6 * 72,
+            child: pw.Image(
+              pw.MemoryImage(finalBytes),
+              width: 4 * 72,
+              height: 6 * 72,
+              fit: pw.BoxFit.fill,
+            ),
+          );
+        },
+      ),
+    );
 
-      showMessage('Error al imprimir: $e');
-    }
+    await Printing.layoutPdf(
+      onLayout: (format) async => pdf.save(),
+      name: 'PALOMITOPTY_${DateTime.now().millisecondsSinceEpoch}',
+      format: const PdfPageFormat(
+        4 * 72,
+        6 * 72,
+      ),
+    );
+  } catch (e) {
+    if (!mounted) return;
+
+    showMessage('Error al imprimir: $e');
   }
+}
+
+
+
 
   // ==========================================================
   // REPETIR FOTOGRAFÍA
